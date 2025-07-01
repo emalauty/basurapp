@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BasurAPP - Reciclaje en Lanús</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .app-screen {
+            background-image: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+        }
+        .app-icon {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        .app-icon:hover {
+            transform: scale(1.05);
+        }
+        .splash-screen {
+            background: radial-gradient(circle at center, #4db6ac, #00897b);
+        }
+        .category-chip {
+            transition: all 0.3s ease;
+        }
+        .category-chip:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="font-poppins bg-gray-100 min-h-screen" onload="showSplashScreen()">
+    <!-- Pantalla de inicio estilo celular -->
+    <div id="splashScreen" class="splash-screen fixed inset-0 flex flex-col items-center justify-center z-50 text-white">
+        <div class="text-center p-4">
+            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/b9a1a620-bbe7-4a77-904b-3ec2f9a07bb7.png" alt="Logo de BasurAPP - Icono de app con diseño de contenedores de reciclaje de colores verde, amarillo y azul formando una B" class="mx-auto mb-6 rounded-2xl">
+            <h1 class="text-3xl font-bold mb-2">BasurAPP</h1>
+            <p class="text-lg">Reciclaje inteligente en Lanús</p>
+        </div>
+    </div>
+
+    <div id="appContainer" class="hidden max-w-md mx-auto bg-white min-h-screen relative overflow-hidden">
+        <!-- Header simulando celular -->
+        <div class="bg-gray-800 text-white px-4 py-2 flex justify-between items-center">
+            <span id="currentTime" class="text-sm">14:25</span>
+            <div class="flex space-x-2">
+                <span class="text-sm">📶</span>
+                <span class="text-sm">🔋</span>
+            </div>
+        </div>
+
+        <!-- Barra de búsqueda simulando celular -->
+        <div class="px-4 py-2 bg-gray-100">
+            <input type="text" placeholder="Buscar en BasurAPP" class="w-full px-4 py-2 rounded-full bg-white text-sm border border-gray-300">
+        </div>
+
+        <!-- Contenido principal de la app -->
+        <div class="p-4 pb-20 overflow-y-auto">
+            <h2 class="text-xl font-bold mb-4 text-green-700">Bienvenido a BasurAPP</h2>
+            
+            <!-- Secciones principales -->
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="bg-white rounded-xl shadow-md p-4 text-center category-chip" onclick="showSection('waste')">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/6e8d1d77-c82f-4792-b4cf-6ed647ae8840.png" alt="Icono de pregunta con varios tipos de residuos alrededor" class="mx-auto mb-2 h-12 w-12">
+                    <h3 class="font-semibold">¿Dónde tiro esto?</h3>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-md p-4 text-center category-chip" onclick="showSection('map')">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/5c000faf-e0f2-4875-9e5a-85a63c20f19b.png" alt="Icono de mapa con marcador verde en ubicación de puntos verdes" class="mx-auto mb-2 h-12 w-12">
+                    <h3 class="font-semibold">Puntos Verdes</h3>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-md p-4 text-center category-chip" onclick="showSection('tips')">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/f281f248-ed33-4d66-9ec7-61e8a5b8932d.png" alt="Icono de bombilla con hojas creciendo dentro representando ideas ecológicas" class="mx-auto mb-2 h-12 w-12">
+                    <h3 class="font-semibold">Tips Reducir</h3>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-md p-4 text-center category-chip" onclick="showSection('bottle')">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/1ae1df1f-f659-4d02-8e0a-a2c7fae3b750.png" alt="Icono de botella de plástico llena de residuos plásticos" class="mx-auto mb-2 h-12 w-12">
+                    <h3 class="font-semibold">Botella del Amor</h3>
+                </div>
+            </div>
+
+            <!-- Contenido de la sección activa -->
+            <div id="activeSection">
+                <!-- Sección de bienvenida inicial -->
+                <div class="text-center py-8">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/e795522c-8e19-493b-af9c-4e9d68cd3ea3.png" alt="Ilustración de familia reciclando en Lanús con contenedores de colores y árboles de fondo" class="mx-auto mb-4">
+                    <p class="text-gray-600 mb-4">Aprende a reciclar correctamente y encuentra los puntos verdes más cercanos en Lanús</p>
+                    <button onclick="showSection('waste')" class="bg-green-500 hover:bg-green-600 text-white py-2 px-6 rounded-full font-medium shadow">Comenzar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Barra de navegación inferior -->
+        <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-2">
+            <button onclick="showSection('home')" class="text-center p-2 text-green-500">
+                <span class="block text-2xl">🏠</span>
+                <span class="text-xs">Inicio</span>
+            </button>
+            <button onclick="showSection('map')" class="text-center p-2 text-gray-500">
+                <span class="block text-2xl">🗺️</span>
+                <span class="text-xs">Mapa</span>
+            </button>
+            <button onclick="showSection('tips')" class="text-center p-2 text-gray-500">
+                <span class="block text-2xl">💡</span>
+                <span class="text-xs">Tips</span>
+            </button>
+            <button onclick="showSection('profile')" class="text-center p-2 text-gray-500">
+                <span class="block text-2xl">👤</span>
+                <span class="text-xs">Perfil</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Las diferentes secciones (ocultas inicialmente) -->
+    <div id="home-section" class="hidden">
+        <!-- Contenido dinámico cargado por JS -->
+    </div>
+
+    <!-- Sección "¿Dónde tiro esto?" -->
+    <div id="waste-section" class="hidden bg-white p-4">
+        <h2 class="text-xl font-bold mb-4 text-green-700">¿Dónde tiro esto?</h2>
+        <div class="mb-6">
+            <input type="text" placeholder="Buscar un residuo..." class="w-full px-4 py-2 border rounded-lg mb-4" id="wasteSearch">
+            <div class="grid grid-cols-2 gap-3" id="wasteItems">
+                <div class="bg-blue-50 p-3 rounded-lg" onclick="showWasteInfo('plasticos')">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/fd9ade8a-e308-47b4-9d9a-843aa9230799.png" alt="Icono de botellas plásticas" class="mx-auto mb-1">
+                    <p class="text-center text-sm">Plásticos</p>
+                </div>
+                <div class="bg-green-50 p-3 rounded-lg" onclick="showWasteInfo('vidrio')">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/dadd1f6c-df04-44ff-9753-08c9295e34bc.png" alt="Icono de botellas de vidrio" class="mx-auto mb-1">
+                    <p class="text-center text-sm">Vidrio</p>
+                </div>
+                <div class="bg-yellow-50 p-3 rounded-lg" onclick="showWasteInfo('papel')">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/be253c6e-2c6f-4547-999e-5f47180511d6.png" alt="Icono de papeles y cartón" class="mx-auto mb-1">
+                    <p class="text-center text-sm">Papel/Cartón</p>
+                </div>
+                <div class="bg-red-50 p-3 rounded-lg" onclick="showWasteInfo('metal')">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/2c6becc1-d1dc-49fe-9261-013ce8d072e1.png" alt="Icono de latas metálicas" class="mx-auto mb-1">
+                    <p class="text-center text-sm">Metales</p>
+                </div>
+                <div class="bg-gray-100 p-3 rounded-lg" onclick="showWasteInfo('organicos')">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/61ba5fbd-3b5c-4259-9f46-5beae3822631.png" alt="Icono de residuos orgánicos como cáscaras" class="mx-auto mb-1">
+                    <p class="text-center text-sm">Orgánicos</p>
+                </div>
+                <div class="bg-purple-50 p-3 rounded-lg" onclick="showWasteInfo('electronicos')">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/31c77867-c7c6-4afb-86bf-8f23f352fcc7.png" alt="Icono de dispositivos electrónicos" class="mx-auto mb-1">
+                    <p class="text-center text-sm">Electrónicos</p>
+                </div>
+            </div>
+        </div>
+        
+        <div id="wasteInfo" class="hidden bg-gray-50 p-4 rounded-lg">
+            <h3 class="font-bold mb-2 text-lg" id="wasteTitle">Plásticos</h3>
+            <p id="wasteDescription">Los plásticos reciclables incluyen botellas, envases y envoltorios limpios y secos. Deben ir en los contenedores verdes.</p>
+            <div class="mt-4">
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/2df15388-ce04-4785-8df5-a4b8fcb7ed0a.png" alt="Ejemplo de residuos plásticos reciclables: botellas de gaseosa, envases de shampoo y bolsas limpias" class="w-full rounded mb-2">
+            </div>
+            <div class="flex justify-between mt-4">
+                <button onclick="hideWasteInfo()" class="text-gray-500 text-sm">← Volver</button>
+                <button onclick="showNearestPoint('plasticos')" class="bg-green-500 text-white px-4 py-1 rounded text-sm">Ver puntos cercanos</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de mapa de puntos verdes -->
+    <div id="map-section" class="hidden bg-white p-4">
+        <h2 class="text-xl font-bold mb-4 text-green-700">Puntos Verdes en Lanús</h2>
+        <div class="h-64 bg-gray-200 rounded-lg mb-4">
+            <!-- Simulando un mapa de Google con marcadores -->
+            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/ce9f0723-c1d9-488d-802e-a7d41d874c89.png" alt="Mapa de Lanús con marcadores de puntos verdes y centros de reciclaje destacados en verde" class="w-full h-full object-cover">
+        </div>
+        <div class="grid grid-cols-1 gap-3">
+            <div class="border p-3 rounded-lg flex items-center">
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/6673436f-40da-4a1c-b825-f50687c10eea.png" alt="Icono de punto verde" class="mr-3">
+                <div>
+                    <h4 class="font-semibold">Plaza Grigera</h4>
+                    <p class="text-sm text-gray-600">Av. Hipólito Yrigoyen 5200</p>
+                    <p class="text-xs text-green-600 mt-1">Abierto: 08:00 - 20:00</p>
+                </div>
+            </div>
+            <div class="border p-3 rounded-lg flex items-center">
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/a1f8115c-dd4c-43cd-9885-efc234176319.png" alt="Icono de punto verde" class="mr-3">
+                <div>
+                    <h4 class="font-semibold">Plaza España</h4>
+                    <p class="text-sm text-gray-600">9 de Julio y Salta</p>
+                    <p class="text-xs text-green-600 mt-1">Abierto: 09:00 - 18:00</p>
+                </div>
+            </div>
+            <div class="border p-3 rounded-lg flex items-center">
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/d384b787-3c02-4eee-9ed7-0ba3f23b5093.png" alt="Icono de punto verde" class="mr-3">
+                <div>
+                    <h4 class="font-semibold">Centro Municipal</h4>
+                    <p class="text-sm text-gray-600">Sarmiento 3153</p>
+                    <p class="text-xs text-green-600 mt-1">Abierto: 10:00 - 16:00</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de tips para reducir basura -->
+    <div id="tips-section" class="hidden bg-white p-4">
+        <h2 class="text-xl font-bold mb-4 text-green-700">Tips para Reducir la Basura</h2>
+        <div class="space-y-4">
+            <div class="p-4 bg-amber-50 rounded-lg">
+                <h3 class="font-semibold mb-2 flex items-center">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/7b2832fb-706f-4823-8183-3a1b75b8f950.png" alt="Icono de bolsa de compras reutilizable" class="mr-2">
+                    Usa bolsas reutilizables
+                </h3>
+                <p class="text-sm">Lleva tus propias bolsas al hacer compras para evitar acumular bolsas plásticas.</p>
+            </div>
+            <div class="p-4 bg-blue-50 rounded-lg">
+                <h3 class="font-semibold mb-2 flex items-center">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/95b16146-5668-4c6c-951c-4851ac2645ba.png" alt="Icono de botella de agua reutilizable" class="mr-2">
+                    Evita botellas desechables
+                </h3>
+                <p class="text-sm">Usa una botella reutilizable de acero inoxidable o vidrio en lugar de comprar botellas plásticas.</p>
+            </div>
+            <div class="p-4 bg-green-50 rounded-lg">
+                <h3 class="font-semibold mb-2 flex items-center">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/a028f350-7ae7-4cc0-a156-9244eeb60db7.png" alt="Icono de compra a granel" class="mr-2">
+                    Compra a granel
+                </h3>
+                <p class="text-sm">Adquiere alimentos sin empaques individuales y lleva tus propios recipientes.</p>
+            </div>
+            <div class="p-4 bg-yellow-50 rounded-lg">
+                <h3 class="font-semibold mb-2 flex items-center">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/0b596c8c-9d36-466f-a294-c5817942acba.png" alt="Icono de compostera" class="mr-2">
+                    Composta orgánicos
+                </h3>
+                <p class="text-sm">Crea compost con restos de frutas, verduras y otros biodegradables para tu jardín.</p>
+            </div>
+            <div class="p-4 bg-purple-50 rounded-lg">
+                <h3 class="font-semibold mb-2 flex items-center">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/0e90923e-9bdb-4ef0-a6fb-0b6c356c4445.png" alt="Icono de reparación de objetos" class="mr-2">
+                    Repara antes de descartar
+                </h3>
+                <p class="text-sm">Antes de tirar algo, considera si puedes repararlo o darle otro uso.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de "Botella del Amor" -->
+    <div id="bottle-section" class="hidden bg-white p-4">
+        <h2 class="text-xl font-bold mb-4 text-green-700">¿Qué es una Botella del Amor?</h2>
+        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/a89d08eb-6bd9-4dec-a36d-b1a59aa56374.png" alt="Ejemplo de botella de plástico llena de pequeños residuos plásticos compactados" class="w-full rounded-lg mb-4">
+        
+        <div class="bg-yellow-50 p-4 rounded-lg mb-4">
+            <h3 class="font-semibold mb-2 text-lg">Proyecto de reciclaje solidario</h3>
+            <p class="mb-2">La "Botella del Amor" es una iniciativa que permite recolectar plásticos de un solo uso que no se reciclan comúnmente, compactándolos dentro de botellas PET.</p>
+            <p class="mb-2">Estos materiales se transforman en muebles y otros objetos útiles, generando empleo para personas en situación de vulnerabilidad.</p>
+        </div>
+        
+        <h3 class="font-semibold mb-2 mt-6 text-lg">Cómo hacer tu botella:</h3>
+        <ul class="list-decimal list-inside space-y-2 text-sm">
+            <li>Lava y seca completamente una botella PET de cualquier tamaño.</li>
+            <li>Llena la botella con plásticos limpios y secos (envoltorios, bolsas, paquetes).</li>
+            <li>Compacta bien con ayuda de un palo o cuchara.</li>
+            <li>No incluyas: metales, vidrio, papel, cartón o residuos orgánicos.</li>
+            <li>Entrega la botella en los puntos de recolección.</li>
+        </ul>
+        
+        <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+            <h3 class="font-semibold mb-2">Puntos de entrega en Lanús</h3>
+            <p class="text-sm">• Plaza Grigera - Av. Hipólito Yrigoyen 5200</p>
+            <p class="text-sm">• Centro Municipal - Sarmiento 3153</p>
+            <p class="text-sm text-green-600 font-medium mt-2">Horarios: Lunes a Viernes 10-16hs</p>
+        </div>
+    </div>
+
+    <!-- Mapa extendido con plazas y tachos de reciclaje -->
+    <div id="fullmap-section" class="hidden bg-white p-4">
+        <h2 class="text-xl font-bold mb-4 text-green-700">Reciclaje en plazas de Lanús</h2>
+        <div class="h-80 bg-gray-200 rounded-lg">
+            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/e31b8635-d176-4327-91de-59bd97ea6283.png" alt="Mapa detallado de Lanús mostrando plazas con puntos verdes y ubicación de tachos de reciclaje" class="w-full h-full object-cover">
+        </div>
+        
+        <div class="mt-4 grid grid-cols-1 gap-2">
+            <div class="border rounded-lg p-3 flex items-start">
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/38806ea5-6a64-49fb-8053-2bda1daedb82.png" alt="Icono de plaza con árboles" class="mr-3">
+                <div>
+                    <h4 class="font-semibold">Plaza Grigera</h4>
+                    <p class="text-xs text-gray-600 mb-1">Contenedores: plástico, vidrio, papel</p>
+                    <div class="flex flex-wrap gap-1">
+                        <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Abierto 24h</span>
+                        <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">3 contenedores</span>
+                    </div>
+                </div>
+            </div>
+            <div class="border rounded-lg p-3 flex items-start">
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/2dc3b4fc-95c7-4e90-9d38-1b280239878c.png" alt="Icono de plaza con fuente" class="mr-3">
+                <div>
+                    <h4 class="font-semibold">Plaza 25 de Mayo</h4>
+                    <p class="text-xs text-gray-600 mb-1">Contenedores: plástico, papel</p>
+                    <div class="flex flex-wrap gap-1">
+                        <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Abierto 24h</span>
+                        <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">2 contenedores</span>
+                    </div>
+                </div>
+            </div>
+            <div class="border rounded-lg p-3 flex items-start">
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/3a731a9d-1a32-4a9c-ad8d-653cd440fa06.png" alt="Icono de plaza con juegos infantiles" class="mr-3">
+                <div>
+                    <h4 class="font-semibold">Plaza Libertad</h4>
+                    <p class="text-xs text-gray-600 mb-1">Contenedores: plástico, vidrio</p>
+                    <div class="flex flex-wrap gap-1">
+                        <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Abierto 24h</span>
+                        <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">1 contenedor</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensaje final -->
+    <div id="message-section" class="hidden bg-white p-8 text-center">
+        <div class="bg-green-50 rounded-xl p-6">
+            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/8cdb06c6-08b3-47c4-8f65-676b13a6b31f.png" alt="Icono de corazón formado por hojas verdes" class="mx-auto mb-4">
+            <h2 class="text-xl font-bold mb-3 text-green-700">¡Gracias por reciclar!</h2>
+            <p class="text-gray-600 mb-4">Cada pequeña acción cuenta para construir un Lanús más limpio y sostenible. Juntos podemos marcar la diferencia.</p>
+            <p class="text-sm text-gray-500">BasurAPP - Programa de Reciclaje | Municipalidad de Lanús</p>
+        </div>
+    </div>
+
+    <script>
+        // Simular pantalla de inicio
+        function showSplashScreen() {
+            setTimeout(() => {
+                document.getElementById('splashScreen').classList.add('hidden');
+                document.getElementById('appContainer').classList.remove('hidden');
+                updateClock();
+                setInterval(updateClock, 60000);
+            }, 2000);
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('currentTime').textContent = `${hours}:${minutes}`;
+        }
+
+        // Navegación entre secciones
+        function showSection(section) {
+            document.getElementById('activeSection').innerHTML = '';
+            
+            if(section === 'home') {
+                document.getElementById('activeSection').innerHTML = `
+                    <div class="text-center py-8">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/26b1226b-1c9d-4472-a153-f44b5f2a27de.png" alt="Ilustración de familia reciclando en Lanús" class="mx-auto mb-4">
+                        <p class="text-gray-600 mb-4">Aprende a reciclar correctamente y encuentra los puntos verdes más cercanos en Lanús</p>
+                        <button onclick="showSection('waste')" class="bg-green-500 hover:bg-green-600 text-white py-2 px-6 rounded-full font-medium shadow">Comenzar</button>
+                    </div>
+                `;
+            } else if(section === 'waste') {
+                document.getElementById('activeSection').innerHTML = document.getElementById('waste-section').innerHTML;
+            } else if(section === 'map') {
+                document.getElementById('activeSection').innerHTML = document.getElementById('map-section').innerHTML;
+            } else if(section === 'fullmap') {
+                document.getElementById('activeSection').innerHTML = document.getElementById('fullmap-section').innerHTML;
+            } else if(section === 'tips') {
+                document.getElementById('activeSection').innerHTML = document.getElementById('tips-section').innerHTML;
+            } else if(section === 'bottle') {
+                document.getElementById('activeSection').innerHTML = document.getElementById('bottle-section').innerHTML;
+            } else if(section === 'message') {
+                document.getElementById('activeSection').innerHTML = document.getElementById('message-section').innerHTML;
+            }
+        }
+
+        // Para la sección de residuos
+        function showWasteInfo(type) {
+            const wasteData = {
+                'plasticos': {
+                    title: 'Plásticos',
+                    description: 'Lleva botellas, envases y envoltorios limpios y secos a los contenedores verdes. Asegúrate de quitar tapas y etiquetas. No incluyas plásticos multicapa como los de paquetes de snacks.',
+                    image: 'https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/f4a0d387-24be-4d2c-9e05-ef6c8f50fc9f.png'
+                },
+                'vidrio': {
+                    title: 'Vidrio',
+                    description: 'Deposita botellas y frascos de vidrio limpios en los contenedores blancos. Quita tapas y etiquetas. No incluyas vidrio roto, espejos, cristales de ventanas o vasos.',
+                    image: 'https://placehold.co/300x150'
+                },
+                'papel': {
+                    title: 'Papel y Cartón',
+                    description: 'Coloca periódicos, revistas, cajas y cartones limpios y secos en los contenedores azules. No incluyas papel sucio, plastificado o con restos de comida.',
+                    image: 'https://placehold.co/300x150'
+                },
+                'metal': {
+                    title: 'Metales',
+                    description: 'Deposita latas de aluminio y conserva limpias en los contenedores amarillos. Puedes compactarlas para ahorrar espacio. No incluyas aerosoles o latas con restos de pintura.',
+                    image: 'https://placehold.co/300x150'
+                },
+                'organicos': {
+                    title: 'Residuos Orgánicos',
+                    description: 'Los restos de frutas, verduras, cáscaras, café y yerba pueden compostarse. En algunos puntos verdes hay contenedores marrones para estos residuos.',
+                    image: 'https://placehold.co/300x150'
+                },
+                'electronicos': {
+                    title: 'Electrónicos',
+                    description: 'Lleva celulares, computadoras y pequeños electrodomésticos a los puntos limpios especializados. No los tires con la basura común por sus componentes tóxicos.',
+                    image: 'https://placehold.co/300x150'
+                }
+            };
+            
+            document.getElementById('wasteTitle').textContent = wasteData[type].title;
+            document.getElementById('wasteDescription').textContent = wasteData[type].description;
+            document.getElementById('wasteInfo').querySelector('img').src = wasteData[type].image;
+            
+            document.getElementById('wasteItems').classList.add('hidden');
+            document.getElementById('wasteInfo').classList.remove('hidden');
+        }
+
+        function hideWasteInfo() {
+            document.getElementById('wasteItems').classList.remove('hidden');
+            document.getElementById('wasteInfo').classList.add('hidden');
+        }
+
+        function showNearestPoint(type) {
+            showSection('map');
+            // Aquí en una app real se filtraría el mapa por el tipo seleccionado
+        }
+    </script>
+</body>
+</html>
+
